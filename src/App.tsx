@@ -1,20 +1,32 @@
-import { useState } from 'react';
-import './App.css';
+import { useState, useCallback } from 'react';
+import CodeInputLength from 'components/CodeInputLength';
+import './App.scss';
 import CodeInput from "./components/CodeInput";
-import { INITIAL_CODE_LENGTH } from './constants';
+import { INITIAL_CODE_LENGTH } from './constants/variables';
 
 function App() {
-  const [codeLength, setCodeLength] = useState(INITIAL_CODE_LENGTH);
+  const [codeLength, setCodeLength] = useState<number>(INITIAL_CODE_LENGTH);
+  const [isFilled, setIsFilled] = useState<boolean>(false);
 
-  function handleOnCodeFull(code: string) {
-    console.log(`code is : ${code}`);
+  const handleLengthInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+
+    setCodeLength(Number(value))
+  }, [setCodeLength])
+
+  const handleCodeFilled = (code: string) => {
+    setIsFilled(!!code)
   }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <CodeInput setCodeIsFilled={handleOnCodeFull} length={codeLength} />
-      </header>
+      <CodeInputLength onChange={handleLengthInputChange} />
+      <CodeInput handleCodeFilled={handleCodeFilled} length={codeLength ?? INITIAL_CODE_LENGTH} />
+      {
+        isFilled && (
+          <p className="codeHint">{`Your code is filled`}</p>
+        )
+      }
     </div>
   );
 }

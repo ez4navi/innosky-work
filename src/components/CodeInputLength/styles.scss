@@ -1,0 +1,15 @@
+.inputWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .hint {
+    font-size: 14px;
+    color: black;
+  }
+
+  .lengthInput {
+    width: 100px;
+    font-size: 24px;
+  }
+}

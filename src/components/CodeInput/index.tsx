@@ -1,17 +1,21 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Input from "components/Input";
+import { INITIAL_CODE_LENGTH } from 'constants/variables';
+import "./styles.scss";
 
 interface Props {
   length: number;
-  setCodeIsFilled: (code: string) => void
+  handleCodeFilled: (code: string) => void
 }
 
 export default function CodeInput({
-  length = 4,
-  setCodeIsFilled
+  length = INITIAL_CODE_LENGTH,
+  handleCodeFilled
 }: Props) {
   const [code, setCode] = useState<string[]>([]);
-  const refs = useRef(Array(length));
+  const [isHide, setHide] = useState<boolean>(true);
+
+  const refs = useRef(Array(isNaN(length) ? INITIAL_CODE_LENGTH : length));
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     event.preventDefault();
@@ -20,13 +24,17 @@ export default function CodeInput({
       return setCode((currentCode) => currentCode.slice(0, currentCode.length - 1));
     }
 
-    if (!isNaN(Number(event.key)) && code.length < length) {
+    if (!isNaN(Number(event.key)) && code.length < (length ?? INITIAL_CODE_LENGTH)) {
       return setCode((currentCode) => [...currentCode, event.key]);
     }
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
+  }
+
+  const handleHideClick = () => {
+    setHide((isHide) => !isHide);
   }
 
   const setFocus = () => refs.current[code.length]?.focus();
@@ -36,30 +44,42 @@ export default function CodeInput({
       refs.current[code.length].focus();
     }
     if (code.length === length) {
-      setCodeIsFilled(code.join(""));
+      handleCodeFilled(code.join(""));
     }
-  }, [code, length, setCodeIsFilled]);
+  }, [code, length, handleCodeFilled]);
 
   const emptyCodeArray = useMemo(() => {
-    return Array(length).fill(null)
+    return Array((isNaN(length) || !length) ? INITIAL_CODE_LENGTH : length).fill(null)
   }, [length])
 
   return (
-    <>
-      {
-        emptyCodeArray.map((_, index: number) => (
-          <Input
-            value={code[index] ?? ""}
-            key={index}
-            ref={(element) => {
-              refs.current[index] = element;
-            }}
-            onKeyDown={handleKeyDown}
-            onChange={onChange}
-            onFocus={setFocus}
-          />
-        ))
-      }
-    </>
+    <div className="codeInputContainer">
+      <p>Enter your code:</p>
+      <div className="inputsWrap">
+        {
+          emptyCodeArray.map((_, index: number) => {
+            return (
+              <Input
+                type={isHide ? "password" : "text"}
+                value={code[index] ?? ""}
+                key={index}
+                ref={(element) => {
+                  refs.current[index] = element;
+                }}
+                onKeyDown={handleKeyDown}
+                onChange={onChange}
+                onFocus={setFocus}
+              />
+            )
+          })
+        }
+      </div>
+      <button
+        disabled={!code[0]}
+        className="hideButton"
+        onClick={handleHideClick}>{
+          isHide ? "Show code" : "Hide code"}
+      </button>
+    </div>
   )
 }
