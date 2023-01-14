@@ -24,7 +24,7 @@ function App() {
       <CodeInput handleCodeFilled={handleCodeFilled} length={codeLength ?? INITIAL_CODE_LENGTH} />
       {
         isFilled && (
-          <p className="codeHint">{`Your code is filled`}</p>
+          <p className="codeHint">Your code is filled</p>
         )
       }
     </div>
