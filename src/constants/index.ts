@@ -1,0 +1,3 @@
+const INITIAL_CODE_LENGTH = 4;
+
+export { INITIAL_CODE_LENGTH }

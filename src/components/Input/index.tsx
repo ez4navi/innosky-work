@@ -4,6 +4,9 @@ import "./styles.scss"
 
 interface Props {
   value?: string;
+  onKeyDown?: React.KeyboardEventHandler;
+  onChange?: React.ChangeEventHandler;
+  onFocus?: React.FocusEventHandler;
 }
 
 const Input = forwardRef<HTMLInputElement, Props>((props: Props, ref: React.ForwardedRef<HTMLInputElement>): JSX.Element => {
